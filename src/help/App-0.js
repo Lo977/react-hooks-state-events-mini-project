@@ -4,20 +4,24 @@ import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
 
 import { CATEGORIES, TASKS } from "../data";
-console.log("Here's the data you're working with");
-console.log({ CATEGORIES, TASKS });
 
 function App() {
   const [tasks, setTasks] = useState(TASKS);
   const [category, setCategory] = useState("All");
 
-  function handleDelete(param) {
-    setTasks(tasks.filter((task) => task.text !== param));
+  const visibleTasks =
+    category === "All"
+      ? tasks
+      : tasks.filter((task) => task.category === category);
+
+  function handleDelete(deletedTaskText) {
+    setTasks(tasks.filter((task) => task.text !== deletedTaskText));
   }
 
-  function handleSubmit(newParam) {
-    setTasks([...tasks, newParam]);
+  function handleSetTasks(newTask) {
+    setTasks([...tasks, newTask]);
   }
+
   return (
     <div className="App">
       <h2>My tasks</h2>
@@ -26,13 +30,8 @@ function App() {
         selectedCategory={category}
         onSelectCategory={setCategory}
       />
-      <NewTaskForm onTaskFormSubmit={handleSubmit} categories={CATEGORIES} />
-      <TaskList
-        onHandleDelete={handleDelete}
-        tasks={tasks.filter(
-          (task) => task.category === category || category === "All"
-        )}
-      />
+      <NewTaskForm onTaskFormSubmit={handleSetTasks} categories={CATEGORIES} />
+      <TaskList onHandleDelete={handleDelete} tasks={visibleTasks} />
     </div>
   );
 }
